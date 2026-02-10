@@ -4,8 +4,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  overflow: hidden;
 }
 .canvas {
   background-color: white;
+  overflow: scroll;
 }
 

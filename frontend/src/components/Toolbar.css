@@ -1,0 +1,4 @@
+.toolbarDiv {
+  display: flex;
+  flex-direction: column;
+}
