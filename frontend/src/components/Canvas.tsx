@@ -8,6 +8,7 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePointRef = useRef<Point>({ x: 0, y: 0 });
   const clickPressedRef = useRef<boolean>(false);
+  const mouseLeavedRef = useRef<boolean>(false);
   const [toolSize, setToolSize] = useState<number>(1);
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
   const [toolType, setToolType] = useState<CanvasTool>(CanvasTools.PEN);
@@ -40,7 +41,7 @@ function Canvas() {
   };
 
   const useTool = (canvasRelX: number, canvasRelY: number) => {
-    if (clickPressedRef.current && canvasRef.current) {
+    if (canvasRef.current) {
       const canvas = canvasRef.current;
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
@@ -90,20 +91,35 @@ function Canvas() {
         width={1600}
         height={800}
         onMouseDown={(e: React.MouseEvent<HTMLCanvasElement>) => {
-          if (e.button != 0) {
+          if (e.buttons !== 1) {
             return;
           }
           clickPressedRef.current = true;
           setStartingPoint(e.clientX, e.clientY);
         }}
         onMouseMove={(e: React.MouseEvent<HTMLCanvasElement>) => {
-          if (e.button != 0) {
+          if (
+            e.buttons !== 1 ||
+            mouseLeavedRef.current ||
+            !clickPressedRef.current
+          ) {
             return;
           }
           useTool(e.clientX, e.clientY);
         }}
-        onMouseUp={() => {
+        onMouseUp={(e: React.MouseEvent<HTMLCanvasElement>) => {
+          useTool(e.clientX, e.clientY);
           clickPressedRef.current = false;
+        }}
+        onMouseLeave={() => {
+          mouseLeavedRef.current = true;
+        }}
+        onMouseEnter={(e: React.MouseEvent<HTMLCanvasElement>) => {
+          mouseLeavedRef.current = false;
+          if (e.buttons === 1) {
+            clickPressedRef.current = true;
+            setStartingPoint(e.clientX, e.clientY);
+          }
         }}
       ></canvas>
     </div>
