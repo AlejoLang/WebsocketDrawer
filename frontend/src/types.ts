@@ -4,7 +4,11 @@ export type Point = {
   y: number;
 };
 
-export type StrokeConfig = {
-  color: string;
-  size: number;
-};
+export const CanvasTools = {
+  PEN: 'pen',
+  ERASER: 'eraser',
+  SELECT: 'select',
+} as const;
+
+export type CanvasTool = (typeof CanvasTools)[keyof typeof CanvasTools];
+
