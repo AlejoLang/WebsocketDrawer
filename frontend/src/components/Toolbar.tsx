@@ -52,9 +52,7 @@ function Toolbar({
         >
           E
         </button>
-        <button onClick={onClear}>
-          Clear
-        </button>
+        <button onClick={onClear}>Clear</button>
       </div>
     </div>
   );

@@ -16,7 +16,12 @@ function Canvas() {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext('2d');
       if (context) {
-        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        context.clearRect(
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height,
+        );
       }
     }
   };
