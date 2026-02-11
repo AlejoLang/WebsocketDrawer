@@ -20,6 +20,7 @@ function Toolbar({
   onClear: () => void;
 }) {
   const colorPickerRef = useRef<HTMLInputElement>(null);
+  const sizePickerRef = useRef<HTMLInputElement>(null);
   return (
     <div className='toolbarDiv'>
       <input
@@ -28,13 +29,30 @@ function Toolbar({
         value={strokeColor}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setStrokeColor(e.target.value);
+          setToolType(CanvasTools.PEN);
         }}
       />
       <input
         type='number'
         value={toolSize}
+        ref={sizePickerRef}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setToolSize(parseFloat(e.target.value));
+        }}
+        onWheel={(e: React.WheelEvent<HTMLInputElement>) => {
+          if (!sizePickerRef.current) {
+            return;
+          }
+          if (e.deltaY < 0) {
+            sizePickerRef.current.value = (
+              parseInt(sizePickerRef.current.value ?? 0) + 1
+            ).toString();
+          } else if (e.deltaY > 0) {
+            sizePickerRef.current.value = (
+              parseInt(sizePickerRef.current.value ?? 1) - 1
+            ).toString();
+          }
+          setToolSize(parseFloat(sizePickerRef.current.value));
         }}
       />
       <div>
