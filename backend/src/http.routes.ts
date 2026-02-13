@@ -5,9 +5,11 @@ import { Canvas } from 'canvas';
 
 export const httpRoutes = new Elysia()
   .get('/rooms', () => {
-    const roomsData = rooms.map(({ id, name}) => ({
+    const roomsData = rooms.map(({ id, name, canvas }) => ({
       id,
       name,
+      width: canvas.width,
+      height: canvas.height,
     }));
     return JSON.stringify(roomsData);
   })
@@ -21,27 +23,33 @@ export const httpRoutes = new Elysia()
     return {
       id: roomInfo.id,
       name: roomInfo.name,
+      width: roomInfo.canvas.width,
+      height: roomInfo.canvas.height,
     };
   })
   .post(
     '/room/create',
     ({ body, set }) => {
       try {
-        const { name } = body;
+        const { name, width, height } = body;
         const newRoom: RoomData = {
           id: crypto.randomUUID(),
           name,
-          canvas: new Canvas(1600, 900),
+          canvas: new Canvas(width || 1600, height || 900),
         };
         rooms.push(newRoom);
         return newRoom.id;
-      } catch {
+      } catch (error) {
         set.status = 400;
         return null;
       }
     },
     {
-      body: t.Object({ name: t.String()}),
+      body: t.Object({
+        name: t.String(),
+        width: t.Optional(t.Number()),
+        height: t.Optional(t.Number()),
+      }),
     },
   );
 

@@ -31,7 +31,11 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
       ws.send(
         JSON.stringify({
           type: CanvasActions.INIT,
-          data: base64Image,
+          data: {
+            image: base64Image,
+            width: roomData.canvas.width,
+            height: roomData.canvas.height,
+          },
         }),
       );
     }

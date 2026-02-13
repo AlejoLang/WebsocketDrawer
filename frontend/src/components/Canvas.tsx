@@ -29,13 +29,15 @@ function Canvas({ roomId }: { roomId: string }) {
 
         if (type === CanvasActions.INIT && data && canvasRef.current) {
           const img = new Image();
+          canvasRef.current.width = data.width;
+          canvasRef.current.height = data.height;
           img.onload = () => {
             const ctx = canvasRef.current?.getContext('2d');
             if (ctx) {
               ctx.drawImage(img, 0, 0);
             }
           };
-          img.src = `data:image/png;base64,${data}`;
+          img.src = `data:image/png;base64,${data.image}`;
         } else if (type == CanvasActions.DRAW) {
           const { x1, y1, x2, y2, toolType, toolSize, strokeColor } = data;
           useTool(toolType, toolSize, strokeColor, x1, y1, x2, y2);
@@ -180,7 +182,7 @@ function Canvas({ roomId }: { roomId: string }) {
         ref={canvasRef}
         className='canvas'
         width={1600}
-        height={800}
+        height={900}
         onMouseDown={(e: React.MouseEvent<HTMLCanvasElement>) => {
           if (e.buttons !== 1) {
             return;
