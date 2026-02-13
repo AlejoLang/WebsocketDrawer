@@ -4,7 +4,7 @@ import type { Point, CanvasTool } from '../types';
 import { CanvasTools, CanvasActions } from '../types';
 import Toolbar from './Toolbar';
 
-function Canvas() {
+function Canvas({ roomId }: { roomId: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lastMousePointRef = useRef<Point>({ x: 0, y: 0 });
   const clickPressedRef = useRef<boolean>(false);
@@ -15,8 +15,8 @@ function Canvas() {
   const [toolType, setToolType] = useState<CanvasTool>(CanvasTools.PEN);
 
   useEffect(() => {
-    // Conectar al WebSocket
-    const ws = new WebSocket('ws://192.168.18.64:3000/canvas/default');
+    // Connect to websocket
+    const ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/canvas/${roomId}`);
     wsRef.current = ws;
 
     ws.onopen = () => {
@@ -199,6 +199,9 @@ function Canvas() {
           drawWithLastPoint(e.clientX, e.clientY);
         }}
         onMouseUp={(e: React.MouseEvent<HTMLCanvasElement>) => {
+          if (e.buttons !== 1) {
+            return;
+          }
           drawWithLastPoint(e.clientX, e.clientY);
           clickPressedRef.current = false;
         }}

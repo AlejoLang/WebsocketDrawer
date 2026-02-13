@@ -19,3 +19,8 @@ export const CanvasActions = {
 
 export type CanvasAction = (typeof CanvasActions)[keyof typeof CanvasActions];
 
+export type RoomInfo = {
+  id: string;
+  name: string;
+};
+
