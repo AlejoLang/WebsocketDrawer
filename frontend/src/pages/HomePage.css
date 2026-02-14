@@ -1,0 +1,22 @@
+.homePageBar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  height: 2rem;
+  margin-bottom: 3rem;
+}
+
+.searchInput {
+  width: 400px;
+}
+
+.createRoomButton {
+  margin-left: auto;
+}
+
+.roomsList {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+

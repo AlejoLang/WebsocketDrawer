@@ -1,0 +1,67 @@
+.modal {
+  background-color: rgb(41, 41, 41);
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  height: 300px;
+}
+
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal h2 {
+  text-align: center;
+  margin: 0;
+}
+
+.roomCreationInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.modalRoomNameInput {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: none;
+}
+
+.modalSizeInputs {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: none;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalSizeInputs input {
+  width: 4rem;
+  height: 2.2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  outline: none;
+  border: none;
+}
+
+.modalCreateRoomButton {
+  margin-top: auto;
+  background-color: #247cff;
+  font-size: 1.2rem;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+}
+

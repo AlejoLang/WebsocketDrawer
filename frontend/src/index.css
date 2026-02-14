@@ -14,6 +14,10 @@
   overflow: hidden;
 }
 
+* {
+  transition: 0.25s ease all;
+}
+
 body {
   overflow: hidden;
 }
