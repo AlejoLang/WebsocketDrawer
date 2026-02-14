@@ -190,6 +190,10 @@ function Canvas({ roomId }: { roomId: string }) {
           clickPressedRef.current = true;
           setStartingPoint(e.clientX, e.clientY);
         }}
+        onTouchStart={(e: React.TouchEvent<HTMLCanvasElement>) => {
+          clickPressedRef.current = true;
+          setStartingPoint(e.touches[0].clientX, e.touches[0].clientY);
+        }}
         onMouseMove={(e: React.MouseEvent<HTMLCanvasElement>) => {
           if (
             e.buttons !== 1 ||
@@ -200,11 +204,24 @@ function Canvas({ roomId }: { roomId: string }) {
           }
           drawWithLastPoint(e.clientX, e.clientY);
         }}
+        onTouchMove={(e: React.TouchEvent<HTMLCanvasElement>) => {
+          if (!clickPressedRef.current) {
+            return;
+          }
+          drawWithLastPoint(e.touches[0].clientX, e.touches[0].clientY);
+        }}
         onMouseUp={(e: React.MouseEvent<HTMLCanvasElement>) => {
           if (e.buttons !== 1) {
             return;
           }
           drawWithLastPoint(e.clientX, e.clientY);
+          clickPressedRef.current = false;
+        }}
+        onTouchEnd={(e: React.TouchEvent<HTMLCanvasElement>) => {
+          drawWithLastPoint(
+            e.changedTouches[0].clientX,
+            e.changedTouches[0].clientY,
+          );
           clickPressedRef.current = false;
         }}
         onMouseLeave={() => {
