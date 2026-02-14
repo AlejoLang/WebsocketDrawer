@@ -35,6 +35,7 @@ export const httpRoutes = new Elysia()
         const newRoom: RoomData = {
           id: crypto.randomUUID(),
           name,
+          users: 0,
           canvas: new Canvas(width || 1600, height || 900),
         };
         rooms.push(newRoom);

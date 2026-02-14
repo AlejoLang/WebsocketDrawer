@@ -24,6 +24,12 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
       return;
     }
     ws.subscribe(roomData.id);
+    roomData.users += 1;
+    // Cancel the delete timeout if someone joins the room
+    if (roomData.deleteTimeout) {
+      clearTimeout(roomData.deleteTimeout);
+      roomData.deleteTimeout = undefined;
+    }
     if (roomData.canvas) {
       const base64Image = roomData.canvas
         .toBuffer('image/png')
@@ -74,6 +80,28 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
           type: CanvasActions.CLEAR,
         };
         ws.publish(roomId, m);
+      }
+    }
+  },
+  close(ws) {
+    const roomId = ws.data.params.roomId;
+    const room = rooms.find((r) => r.id === roomId);
+    if (room) {
+      room.users -= 1;
+      if (room.users <= 0) {
+        if (room.deleteTimeout) {
+          clearTimeout(room.deleteTimeout);
+        }
+        room.deleteTimeout = setTimeout(
+          () => {
+            const index = rooms.findIndex((r) => r.id === roomId);
+            if (index !== -1 && rooms[index].users <= 0) {
+              rooms.splice(index, 1);
+              console.log(`Room ${roomId} deleted due to inactivity`);
+            }
+          },
+          5 * 60 * 1000,
+        );
       }
     }
   },

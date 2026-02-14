@@ -3,7 +3,9 @@ import { Canvas } from 'canvas';
 export type RoomData = {
   id: string;
   name: string;
+  users: number;
   canvas: Canvas;
+  deleteTimeout?: NodeJS.Timeout;
 };
 
 export enum CanvasTools {
@@ -16,3 +18,4 @@ export enum CanvasActions {
   DRAW = 'draw', // Draw a line of a color or erase a line, sended from server to client and client to server
   CLEAR = 'clear', // Clear the canvas, sended from server to client and client to server
 }
+
