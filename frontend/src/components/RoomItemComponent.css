@@ -1,8 +1,8 @@
 .roomItem {
-  background-color: rgb(77, 77, 77);
+  background-color: var(--foreground-color);
   padding: 1rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0px 10px #00000048;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -32,11 +32,11 @@
 }
 .roomSize {
   font-size: 0.9rem;
-  color: rgba(204, 204, 204, 0.6);
+  color: var(--text-alt-color);
 }
 
 .joinRoomButton {
-  background-color: #247cff;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -45,6 +45,6 @@
 }
 
 .joinRoomButton:hover {
-  background-color: #1a5fcc;
+  background-color: var(--hover-primary-color);
 }
 

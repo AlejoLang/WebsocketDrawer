@@ -6,7 +6,6 @@ import HomePage from './pages/HomePage.tsx';
 function App() {
   return (
     <div className='app'>
-      <h1>Canvas</h1>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<HomePage />} />

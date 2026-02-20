@@ -25,6 +25,7 @@ function Toolbar({
     <div className='toolbarDiv'>
       <input
         type='color'
+        className='colorPicker'
         ref={colorPickerRef}
         value={strokeColor}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +35,7 @@ function Toolbar({
       />
       <input
         type='number'
+        className='toolSizePicker'
         value={toolSize}
         ref={sizePickerRef}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +57,10 @@ function Toolbar({
           setToolSize(parseFloat(sizePickerRef.current.value));
         }}
       />
-      <div>
+      <div className='toolSelectorDiv'>
         <button
+          className='toolButton'
+          data-active={toolType === CanvasTools.PEN}
           onClick={() => {
             setToolType(CanvasTools.PEN);
           }}
@@ -64,14 +68,18 @@ function Toolbar({
           P
         </button>
         <button
+          className='toolButton'
+          data-active={toolType === CanvasTools.ERASER}
           onClick={() => {
             setToolType(CanvasTools.ERASER);
           }}
         >
           E
         </button>
-        <button onClick={onClear}>Clear</button>
       </div>
+      <button className='clearButton' onClick={onClear}>
+        Clear
+      </button>
     </div>
   );
 }

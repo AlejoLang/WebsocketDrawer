@@ -1,13 +1,41 @@
 .homePageBar {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   margin-bottom: 1rem;
-  height: 2rem;
+  height: 3rem;
+  padding: 0.25rem;
   margin-bottom: 3rem;
 }
 
 .searchInput {
-  width: 400px;
+  width: 600px;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  outline: none;
+  border: 1px solid var(--secondary-color);
+  border-radius: 10px;
+  background-color: var(--foreground-color);
+}
+
+.searchInput:hover,
+.searchInput:focus {
+  border: 1px solid var(--hover-secondary-color);
+}
+
+.refreshRoomsButton,
+.createRoomButton {
+  background-color: var(--primary-color);
+  outline: none;
+  border-radius: 10px;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+}
+
+.refreshRoomsButton:hover,
+.createRoomButton:hover {
+  background-color: var(--hover-primary-color);
+  cursor: pointer;
 }
 
 .createRoomButton {
@@ -17,6 +45,6 @@
 .roomsList {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
