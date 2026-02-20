@@ -1,9 +1,9 @@
 .modal {
-  background-color: rgb(41, 41, 41);
+  background-color: var(--background-color);
   padding: 20px;
+  border: 4px solid var(--secondary-color);
   border-radius: 8px;
   width: 400px;
-  height: 300px;
 }
 
 .modal[open] {
@@ -17,6 +17,10 @@
   margin: 0;
 }
 
+.modalLabel {
+  font-size: 1.1rem;
+}
+
 .roomCreationInputs {
   display: flex;
   flex-direction: column;
@@ -27,14 +31,19 @@
 .modalRoomNameInput {
   width: 100%;
   padding: 10px;
-  box-sizing: border-box;
+  background-color: var(--foreground-color);
   border-radius: 4px;
-  border: none;
+  border: 1px solid var(--secondary-color);
+  outline: none;
+}
+
+.modalRoomNameInput:hover,
+.modalRoomNameInput:focus {
+  border: 1px solid var(--hover-secondary-color);
 }
 
 .modalSizeInputs {
   width: 100%;
-  box-sizing: border-box;
   border-radius: 4px;
   border: none;
   font-size: 1.2rem;
@@ -44,24 +53,34 @@
 }
 
 .modalSizeInputs input {
-  width: 4rem;
+  background-color: var(--foreground-color);
   height: 2.2rem;
+  padding: 0.25rem 0.5rem;
   text-align: center;
   font-size: 1.1rem;
   border-radius: 10px;
   outline: none;
-  border: none;
+  border: 1px solid var(--secondary-color);
+}
+
+.modalSizeInputs input:hover,
+.modalSizeInputs input:focus {
+  border: 1px solid var(--hover-secondary-color);
 }
 
 .modalCreateRoomButton {
   margin-top: auto;
-  background-color: #247cff;
+  background-color: var(--primary-color);
   font-size: 1.2rem;
   color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 4px;
-  cursor: pointer;
   width: 100%;
+}
+
+.modalCreateRoomButton:hover {
+  background-color: var(--hover-primary-color);
+  cursor: pointer;
 }
 

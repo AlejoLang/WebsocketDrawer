@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateRoomModal.css';
 
@@ -50,24 +50,51 @@ const CreateRoomModal = forwardRef<HTMLDialogElement>((props, ref) => {
           ref={roomNameInputRef}
           maxLength={50}
         />
-        <div className='modalSizeInputs'>
-          <input
-            type='number'
-            placeholder='Width'
-            defaultValue={1600}
-            min={100}
-            max={1920}
-            ref={widthInputRef}
-          />
-          x
-          <input
-            type='number'
-            placeholder='Height'
-            defaultValue={900}
-            min={100}
-            max={1080}
-            ref={heightInputRef}
-          />
+        <div>
+          <label className='modalLabel'>Canvas Size:</label>
+          <div className='modalSizeInputs'>
+            <input
+              type='number'
+              placeholder='Width'
+              defaultValue={1600}
+              min={100}
+              max={1920}
+              ref={widthInputRef}
+              onWheel={(e: React.WheelEvent<HTMLInputElement>) => {
+                if (!widthInputRef.current) {
+                  return;
+                }
+                const step = 100;
+                const value = parseInt(widthInputRef.current.value) || 0;
+                if (e.deltaY > 0 && value > 100) {
+                  widthInputRef.current.value = (value - step).toString();
+                } else if (e.deltaY < 0 && value < 1920) {
+                  widthInputRef.current.value = (value + step).toString();
+                }
+              }}
+            />
+            x
+            <input
+              type='number'
+              placeholder='Height'
+              defaultValue={900}
+              min={100}
+              max={1080}
+              ref={heightInputRef}
+              onWheel={(e: React.WheelEvent<HTMLInputElement>) => {
+                if (!heightInputRef.current) {
+                  return;
+                }
+                const step = 100;
+                const value = parseInt(heightInputRef.current.value) || 0;
+                if (e.deltaY > 0 && value > 100) {
+                  heightInputRef.current.value = (value - step).toString();
+                } else if (e.deltaY < 0 && value < 1080) {
+                  heightInputRef.current.value = (value + step).toString();
+                }
+              }}
+            />
+          </div>
         </div>
         <button
           type='submit'
