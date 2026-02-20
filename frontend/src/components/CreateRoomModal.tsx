@@ -48,6 +48,7 @@ const CreateRoomModal = forwardRef<HTMLDialogElement>((props, ref) => {
           placeholder='Room Name'
           className='modalRoomNameInput'
           ref={roomNameInputRef}
+          maxLength={50}
         />
         <div className='modalSizeInputs'>
           <input
