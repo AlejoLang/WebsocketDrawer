@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  username  String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  drawBoards DrawBoard[]
+}
+
+model DrawBoard {
+  id        Int      @id @default(autoincrement())
+  name      String
+  password  String?
+  ownerId   Int
+  width     Int
+  height    Int
+  imageData String?
+  owner     User     @relation(fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+}
