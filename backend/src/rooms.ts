@@ -1,4 +1,4 @@
-import { RoomData } from './types';
+import { RoomData } from "./types";
 
 export const rooms = new Array<RoomData>();
 

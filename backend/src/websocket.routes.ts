@@ -1,8 +1,9 @@
-import { t, Elysia } from 'elysia';
-import { CanvasActions, CanvasTools } from './types';
-import { rooms } from './rooms';
+import { t, Elysia } from "elysia";
+import { CanvasActions, CanvasTools } from "./types";
+import { rooms } from "./rooms";
+import { prisma } from "./prisma_db";
 
-export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
+export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
   params: t.Object({
     roomId: t.String(),
   }),
@@ -17,51 +18,46 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
     y2: t.Number(),
   }),
 
-  open(ws) {
+  async open(ws) {
     const { roomId } = ws.data.params;
-    const roomData = rooms.find((room) => room.id === roomId);
-    if (!roomData) {
+    const roomInfo = await prisma.drawBoard.findUnique({
+      where: {
+        id: parseInt(roomId),
+      },
+    });
+    if (!roomInfo) {
       return;
     }
-    ws.subscribe(roomData.id);
-    roomData.users += 1;
-    // Cancel the delete timeout if someone joins the room
-    if (roomData.deleteTimeout) {
-      clearTimeout(roomData.deleteTimeout);
-      roomData.deleteTimeout = undefined;
-    }
-    if (roomData.canvas) {
-      const base64Image = roomData.canvas
-        .toBuffer('image/png')
-        .toString('base64');
+    ws.subscribe(roomId);
+    if (roomInfo.imageData) {
       ws.send(
         JSON.stringify({
           type: CanvasActions.INIT,
           data: {
-            image: base64Image,
-            width: roomData.canvas.width,
-            height: roomData.canvas.height,
+            image: roomInfo.imageData,
+            width: roomInfo.width,
+            height: roomInfo.height,
           },
         }),
       );
     }
   },
-  message(ws, message) {
+  async message(ws, message) {
     const { roomId } = ws.data.params;
     const { action, toolType, toolSize, strokeColor } = message;
     const { x1, y1, x2, y2 } = message;
-    const canvas = rooms.find((room) => room.id === roomId)?.canvas;
+    const canvas = rooms.find((r) => r.id === parseInt(roomId))?.canvas;
     if (canvas) {
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext("2d");
       if (action === CanvasActions.DRAW) {
         ctx.lineWidth = toolSize;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         if (toolType === CanvasTools.PEN) {
           ctx.strokeStyle = strokeColor;
-          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalCompositeOperation = "source-over";
         } else if (toolType === CanvasTools.ERASER) {
-          ctx.globalCompositeOperation = 'destination-out';
+          ctx.globalCompositeOperation = "destination-out";
         }
         ctx.beginPath();
         ctx.moveTo(x1, y1);
@@ -85,9 +81,8 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
   },
   close(ws) {
     const roomId = ws.data.params.roomId;
-    const room = rooms.find((r) => r.id === roomId);
-    if (room) {
-      room.users -= 1;
+    const room = rooms.find((r) => r.id === parseInt(roomId));
+    /*if (room) {
       if (room.users <= 0) {
         if (room.deleteTimeout) {
           clearTimeout(room.deleteTimeout);
@@ -103,7 +98,7 @@ export const websocketRoutes = new Elysia().ws('/canvas/:roomId', {
           5 * 60 * 1000,
         );
       }
-    }
+    }*/
   },
 });
 

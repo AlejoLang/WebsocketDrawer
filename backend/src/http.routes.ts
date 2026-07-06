@@ -1,21 +1,21 @@
-import { t, Elysia } from 'elysia';
-import { CanvasActions, CanvasTools, RoomData } from './types';
-import { rooms } from './rooms';
-import { Canvas } from 'canvas';
+import { t, Elysia } from "elysia";
+import { CanvasActions, CanvasTools, RoomData } from "./types";
+import { rooms } from "./rooms";
+import { Canvas } from "canvas";
+import { prisma } from "./prisma_db";
 
 export const httpRoutes = new Elysia()
-  .get('/rooms', () => {
-    const roomsData = rooms.map(({ id, name, canvas }) => ({
-      id,
-      name,
-      width: canvas.width,
-      height: canvas.height,
-    }));
+  .get("/rooms", async () => {
+    const roomsData = await prisma.drawBoard.findMany();
     return JSON.stringify(roomsData);
   })
-  .get('/room/:roomId/info', ({ params, set }) => {
+  .get("/room/:roomId/info", async ({ params, set }) => {
     const { roomId } = params;
-    const roomInfo = rooms.find((room) => room.id === roomId);
+    const roomInfo = await prisma.drawBoard.findUnique({
+      where: {
+        id: parseInt(roomId),
+      },
+    });
     if (!roomInfo) {
       set.status = 404;
       return null;
@@ -23,27 +23,35 @@ export const httpRoutes = new Elysia()
     return {
       id: roomInfo.id,
       name: roomInfo.name,
-      width: roomInfo.canvas.width,
-      height: roomInfo.canvas.height,
+      width: roomInfo.width,
+      height: roomInfo.height,
     };
   })
   .post(
-    '/room/create',
-    ({ body, set }) => {
+    "/room/create",
+    async ({ body, set }) => {
       try {
-        const { name, width, height } = body;
-        const newRoom: RoomData = {
-          id: crypto.randomUUID(),
+        const { name, ownerId, width, height } = body;
+        const createdRoom = await prisma.drawBoard.create({
+          data: {
+            name: name.slice(0, 50),
+            ownerId,
+            width: Math.max(100, Math.min(width || 1600, 1920)),
+            height: Math.max(100, Math.min(height || 900, 1080)),
+          },
+        });
+        const newRoom = {
+          id: createdRoom.id,
           name: name.slice(0, 50),
-          users: 0,
           canvas: new Canvas(
             Math.max(100, Math.min(width || 1600, 1920)),
             Math.max(100, Math.min(height || 900, 1080)),
           ),
         };
         rooms.push(newRoom);
-        return newRoom.id;
+        return createdRoom.id;
       } catch (error) {
+        console.error("Error creating room:", error);
         set.status = 400;
         return null;
       }
@@ -51,6 +59,7 @@ export const httpRoutes = new Elysia()
     {
       body: t.Object({
         name: t.String(),
+        ownerId: t.Number(),
         width: t.Optional(t.Number()),
         height: t.Optional(t.Number()),
       }),
