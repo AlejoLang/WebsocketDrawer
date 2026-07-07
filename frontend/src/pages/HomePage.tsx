@@ -11,8 +11,16 @@ function HomePage() {
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const fetchRooms = async () => {
-    const rooms = await fetch(`${import.meta.env.VITE_API_URL}/rooms`).then(
-      (res) => res.json(),
+    const rooms = await fetch(`${import.meta.env.VITE_API_URL}/rooms`, {
+      credentials: 'include',
+    }).then(
+      (res) => {
+        console.log(res.status);
+        if(res.status === 401) {
+          window.location.href = '/login';
+        }
+        return res.json();
+      },
     );
     roomsRef.current = rooms;
     searchRoom(searchInputRef.current?.value || '');

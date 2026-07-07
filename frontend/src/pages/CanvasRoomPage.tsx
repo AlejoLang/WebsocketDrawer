@@ -1,7 +1,7 @@
-import { useParams } from 'react-router-dom';
-import Canvas from '../components/Canvas';
-import { useState, useEffect } from 'react';
-import type { RoomInfo } from '../types';
+import { useParams } from "react-router-dom";
+import Canvas from "../components/Canvas";
+import { useState, useEffect } from "react";
+import type { RoomInfo } from "../types";
 
 function CanvasRoomPage() {
   const { roomId } = useParams();
@@ -18,14 +18,20 @@ function CanvasRoomPage() {
         );
 
         if (!response.ok) {
-          throw new Error('Room not found');
+          if (response.status === 404) {
+            throw new Error("Room not found");
+          } else if (response.status === 401) {
+            window.location.href = "/login";
+            return;
+          }
+          throw new Error("Failed to fetch room info");
         }
 
         const data = await response.json();
         setRoomInfo(data);
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : 'Failed to fetch room info',
+          err instanceof Error ? err.message : "Failed to fetch room info",
         );
       } finally {
         setLoading(false);
@@ -40,12 +46,12 @@ function CanvasRoomPage() {
   }
 
   if (error || !roomInfo) {
-    return <div>Error: {error || 'Room not found'}</div>;
+    return <div>Error: {error || "Room not found"}</div>;
   }
 
   return (
     <div>
-      <Canvas roomId={roomId ?? ''} />
+      <Canvas roomId={roomId ?? ""} />
     </div>
   );
 }
