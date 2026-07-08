@@ -36,13 +36,13 @@ export const boardRoutes = new Elysia()
   })
   .post(
     "/room/create",
-    async ({ body, set }) => {
+    async ({ body, set, userId }) => {
       try {
-        const { name, ownerId, width, height } = body;
+        const { name, width, height } = body;
         const createdRoom = await prisma.drawBoard.create({
           data: {
             name: name.slice(0, 50),
-            ownerId,
+            ownerId: userId,
             width: Math.max(100, Math.min(width || 1600, 1920)),
             height: Math.max(100, Math.min(height || 900, 1080)),
           },
@@ -66,9 +66,61 @@ export const boardRoutes = new Elysia()
     {
       body: t.Object({
         name: t.String(),
-        ownerId: t.Number(),
         width: t.Optional(t.Number()),
         height: t.Optional(t.Number()),
       }),
+      isSignIn: true,
+    },
+  )
+  .delete(
+    "/room/:roomId",
+    async ({ params, set, userId }) => {
+      const roomId = parseInt(params.roomId, 10);
+
+      if (Number.isNaN(roomId)) {
+        set.status = 400;
+        return { success: false, error: "Invalid room id" };
+      }
+
+      try {
+        const room = await prisma.drawBoard.findUnique({
+          where: {
+            id: roomId,
+          },
+          select: {
+            id: true,
+            ownerId: true,
+          },
+        });
+
+        if (!room) {
+          set.status = 404;
+          return { success: false, error: "Room not found" };
+        }
+
+        if (room.ownerId !== userId) {
+          set.status = 403;
+          return {
+            success: false,
+            error: "You are not the owner of this room",
+          };
+        }
+
+        await prisma.drawBoard.delete({
+          where: {
+            id: roomId,
+          },
+        });
+
+        return { success: true, deletedRoomId: room.id };
+      } catch (error) {
+        console.error("Error deleting room:", error);
+        set.status = 400;
+        return { success: false, error: "Failed to delete room" };
+      }
+    },
+    {
+      isSignIn: true,
     },
   );
+
