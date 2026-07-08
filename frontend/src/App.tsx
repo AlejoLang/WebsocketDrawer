@@ -3,11 +3,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CanvasRoomPage from "./pages/CanvasRoomPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
+import NavBar from "./components/NavBar.tsx";
 
 function App() {
   return (
     <div className="app">
       <BrowserRouter>
+        <NavBar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/room/:roomId" element={<CanvasRoomPage />} />
