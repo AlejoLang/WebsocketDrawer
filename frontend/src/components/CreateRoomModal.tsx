@@ -13,7 +13,6 @@ const CreateRoomModal = forwardRef<HTMLDialogElement>((props, ref) => {
     const name = roomNameInputRef.current?.value;
     const width = parseInt(widthInputRef.current?.value || "0");
     const height = parseInt(heightInputRef.current?.value || "0");
-    const ownerId = 1; // Replace with actual owner ID if needed
 
     if (!name || !width || !height) {
       alert("Please fill all fields");
@@ -26,7 +25,8 @@ const CreateRoomModal = forwardRef<HTMLDialogElement>((props, ref) => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, ownerId, width, height }),
+          body: JSON.stringify({ name, width, height }),
+          credentials: "include",
         },
       );
       if (!response.ok) {

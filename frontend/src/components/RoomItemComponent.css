@@ -3,6 +3,7 @@
   padding: 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 0px 10px #00000048;
+  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -46,5 +47,18 @@
 
 .joinRoomButton:hover {
   background-color: var(--hover-primary-color);
+}
+
+.deleteRoomButton {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  background-color: var(--error-color);
+  font-size: 0.8rem;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
 }
 
