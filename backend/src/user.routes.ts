@@ -100,4 +100,25 @@ export const userRoutes = new Elysia()
         password: t.String(),
       }),
     },
+  )
+  .post(
+    "/user/logout",
+    async ({ cookie: { session }, set }) => {
+      try {
+        const token = session?.value;
+        if (token) {
+          await prisma.session.deleteMany({
+            where: {
+              token,
+            },
+          });
+        }
+        session.remove();
+        return { message: "Logged out successfully" };
+      } catch (error) {
+        console.error("Error logging out user:", error);
+        set.status = 500;
+        return { error: "Internal server error" };
+      }
+    },
   );
