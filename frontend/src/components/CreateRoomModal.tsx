@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./CreateRoomModal.css";
 
 const CreateRoomModal = forwardRef<HTMLDialogElement>((props, ref) => {

@@ -3,12 +3,14 @@ import type { RoomInfo } from '../types';
 import './HomePage.css';
 import RoomItemComponent from '../components/RoomItemComponent';
 import CreateRoomModal from '../components/CreateRoomModal';
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
   const roomsRef = useRef<Array<RoomInfo>>([]);
   const createRoomModalRef = useRef<HTMLDialogElement>(null);
   const [filteredRooms, setFilteredRooms] = useState<Array<RoomInfo>>();
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const fetchRooms = async () => {
     const rooms = await fetch(`${import.meta.env.VITE_API_URL}/rooms`, {
@@ -17,7 +19,7 @@ function HomePage() {
       (res) => {
         console.log(res.status);
         if(res.status === 401) {
-          window.location.href = '/login';
+          navigate("/login");
         }
         return res.json();
       },
