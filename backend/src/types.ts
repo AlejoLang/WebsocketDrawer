@@ -5,6 +5,8 @@ export type RoomData = {
   name: string;
   ownerId?: number;
   canvas: Canvas;
+  usersConected?: number;
+  saveTimeout?: NodeJS.Timeout;
 };
 
 export enum CanvasTools {

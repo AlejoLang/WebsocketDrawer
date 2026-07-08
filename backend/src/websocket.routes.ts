@@ -2,6 +2,17 @@ import { t, Elysia } from "elysia";
 import { CanvasActions, CanvasTools } from "./types";
 import { rooms } from "./rooms";
 import { prisma } from "./prisma_db";
+import { Canvas, loadImage } from "canvas";
+
+const CANVAS_SAVE_INTERVAL = 0.5 * 60 * 1000;
+
+const saveCanvasToDatabase = async (roomId: number, canvas: Canvas) => {
+  const imageData = canvas.toDataURL().split(",")[1];
+  await prisma.drawBoard.update({
+    where: { id: roomId },
+    data: { imageData },
+  });
+};
 
 export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
   params: t.Object({
@@ -20,23 +31,51 @@ export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
 
   async open(ws) {
     const { roomId } = ws.data.params;
-    const roomInfo = await prisma.drawBoard.findUnique({
-      where: {
-        id: parseInt(roomId),
-      },
-    });
+    let roomInfo = rooms.find((r) => r.id === parseInt(roomId));
     if (!roomInfo) {
-      return;
+      const roomData = await prisma.drawBoard.findUnique({
+        where: {
+          id: parseInt(roomId),
+        },
+      });
+      if (!roomData) {
+        ws.close(1000, "Room not found");
+        return;
+      }
+      roomInfo = {
+        id: roomData.id,
+        name: roomData.name,
+        ownerId: roomData.ownerId,
+        canvas: new Canvas(roomData.width, roomData.height),
+      };
+      if (roomData.imageData) {
+        const ctx = roomInfo?.canvas?.getContext("2d");
+        if (ctx) {
+          const img = await loadImage(
+            `data:image/png;base64,${roomData.imageData}`,
+          );
+          ctx.drawImage(img, 0, 0);
+        }
+      }
+      roomInfo.usersConected = 0;
+      rooms.push(roomInfo);
     }
     ws.subscribe(roomId);
-    if (roomInfo.imageData) {
+    roomInfo.usersConected = (roomInfo.usersConected || 0) + 1;
+    if (roomInfo.canvas && roomInfo.usersConected === 1) {
+      roomInfo.saveTimeout = setInterval(() => {
+        saveCanvasToDatabase(roomInfo!.id, roomInfo!.canvas);
+      }, CANVAS_SAVE_INTERVAL);
+    }
+    if (roomInfo.canvas) {
+      const imageData = roomInfo.canvas.toDataURL().split(",")[1];
       ws.send(
         JSON.stringify({
           type: CanvasActions.INIT,
           data: {
-            image: roomInfo.imageData,
-            width: roomInfo.width,
-            height: roomInfo.height,
+            image: imageData,
+            width: roomInfo.canvas.width,
+            height: roomInfo.canvas.height,
           },
         }),
       );
@@ -77,11 +116,23 @@ export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
         };
         ws.publish(roomId, m);
       }
+      // Save the canvas state to the array of rooms
+      const room = rooms.find((r) => r.id === parseInt(roomId));
+      if (room) {
+        room.canvas = canvas;
+        // Save the canvas state to the database
+      }
     }
   },
   close(ws) {
     const roomId = ws.data.params.roomId;
     const room = rooms.find((r) => r.id === parseInt(roomId));
+    if (room) {
+      room.usersConected = (room.usersConected || 1) - 1;
+      if (room.usersConected === 0 && room.saveTimeout) {
+        clearInterval(room.saveTimeout);
+      }
+    }
     /*if (room) {
       if (room.users <= 0) {
         if (room.deleteTimeout) {
