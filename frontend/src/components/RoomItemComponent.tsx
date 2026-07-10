@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import type { RoomInfo } from "../types";
 import "./RoomItemComponent.css";
+import { useAuth } from "../context/userContext";
 
 function RoomItemComponent({ room }: { room: RoomInfo }) {
   const navigate = useNavigate();
+  const { id } = useAuth().user || { id: null };
 
   const handleDeleteRoom = async () => {
     try {
@@ -41,9 +43,11 @@ function RoomItemComponent({ room }: { room: RoomInfo }) {
       >
         Join
       </button>
-      <button className="deleteRoomButton" onClick={handleDeleteRoom}>
-        Delete
-      </button>
+      {room.ownerId === id && (
+        <button className="deleteRoomButton" onClick={handleDeleteRoom}>
+          Delete
+        </button>
+      )}
     </div>
   );
 }

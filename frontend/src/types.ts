@@ -22,6 +22,7 @@ export type CanvasAction = (typeof CanvasActions)[keyof typeof CanvasActions];
 export type RoomInfo = {
   id: string;
   name: string;
+  ownerId: number;
   width: number;
   height: number;
 };
