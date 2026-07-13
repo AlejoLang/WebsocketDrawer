@@ -1,31 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
-import type { RoomInfo } from '../types';
-import './HomePage.css';
-import RoomItemComponent from '../components/RoomItemComponent';
-import CreateRoomModal from '../components/CreateRoomModal';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import type { RoomInfo } from "../types";
+import "./HomePage.css";
+import RoomItemComponent from "../components/RoomItemComponent";
+import CreateRoomModal from "../components/CreateRoomModal";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const roomsRef = useRef<Array<RoomInfo>>([]);
   const createRoomModalRef = useRef<HTMLDialogElement>(null);
-  const [filteredRooms, setFilteredRooms] = useState<Array<RoomInfo>>();
+  const [filteredRooms, setFilteredRooms] = useState<Array<RoomInfo>>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const fetchRooms = async () => {
     const rooms = await fetch(`${import.meta.env.VITE_API_URL}/rooms`, {
-      credentials: 'include',
-    }).then(
-      (res) => {
-        console.log(res.status);
-        if(res.status === 401) {
-          navigate("/login");
-        }
-        return res.json();
-      },
-    );
+      credentials: "include",
+    }).then((res) => {
+      console.log(res.status);
+      if (res.status === 401) {
+        navigate("/login");
+      }
+      return res.json();
+    });
     roomsRef.current = rooms;
-    searchRoom(searchInputRef.current?.value || '');
+    searchRoom(searchInputRef.current?.value || "");
+  };
+
+  const handleRoomDeleted = (roomId: string) => {
+    roomsRef.current = roomsRef.current.filter((room) => room.id !== roomId);
+    searchRoom(searchInputRef.current?.value || "");
   };
 
   useEffect(() => {
@@ -42,27 +45,34 @@ function HomePage() {
 
   return (
     <div>
-      <div className='homePageBar'>
+      <div className="homePageBar">
         <input
-          type='text'
+          type="text"
           ref={searchInputRef}
           onChange={(e) => searchRoom(e.target.value)}
-          className='searchInput'
+          className="searchInput"
         />
-        <button className='refreshRoomsButton' onClick={fetchRooms}>
-          {' '}
+        <button className="refreshRoomsButton" onClick={fetchRooms}>
+          {" "}
           Refresh Rooms
         </button>
         <button
-          className='createRoomButton'
+          className="createRoomButton"
           onClick={() => createRoomModalRef?.current?.showModal()}
         >
           Create Room
         </button>
       </div>
-      <div className='roomsList'>
+      <div className="roomsList">
         {filteredRooms?.map((room) => {
-          return <RoomItemComponent key={room.id} room={room} />;
+          return (
+            <RoomItemComponent
+              key={room.id}
+              room={room}
+              roomsRef={roomsRef}
+              onDeleted={handleRoomDeleted}
+            />
+          );
         })}
       </div>
       <CreateRoomModal ref={createRoomModalRef} />

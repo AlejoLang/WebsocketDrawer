@@ -3,7 +3,15 @@ import type { RoomInfo } from "../types";
 import "./RoomItemComponent.css";
 import { useAuth } from "../context/userContext";
 
-function RoomItemComponent({ room }: { room: RoomInfo }) {
+function RoomItemComponent({
+  room,
+  roomsRef,
+  onDeleted,
+}: {
+  room: RoomInfo;
+  roomsRef: React.MutableRefObject<Array<RoomInfo>>;
+  onDeleted: (roomId: string) => void;
+}) {
   const navigate = useNavigate();
   const { id } = useAuth().user || { id: null };
 
@@ -22,7 +30,8 @@ function RoomItemComponent({ room }: { room: RoomInfo }) {
       }
 
       alert("Room deleted successfully");
-      window.location.reload();
+      roomsRef.current = roomsRef.current.filter((r) => r.id !== room.id);
+      onDeleted(room.id);
     } catch (error) {
       console.error("Error deleting room:", error);
       alert("Failed to delete room");
