@@ -39,6 +39,18 @@ export const boardRoutes = new Elysia()
     async ({ body, set, userId }) => {
       try {
         const { name, width, height } = body;
+        const userRoomsCount = await prisma.drawBoard.count({
+          where: {
+            ownerId: userId,
+          },
+        });
+        
+        const maxRoomsPerUser = parseInt(process.env.MAX_ROOMS_PER_USER || "5", 10);
+        if (userRoomsCount >= maxRoomsPerUser) {
+          set.status = 400;
+          return { success: false, error: "Maximum number of rooms per user reached" };
+        }
+
         const createdRoom = await prisma.drawBoard.create({
           data: {
             name: name.slice(0, 50),
