@@ -20,7 +20,7 @@ function App() {
 
   return (
     <div className="app">
-      <NavBar />
+      {location.pathname !== "/login" && <NavBar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/room/:roomId" element={<CanvasRoomPage />} />
