@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./LoginPage.css";
 
 function LoginPage() {
   const [showLoginForm, setShowLoginForm] = useState(true);
@@ -72,7 +73,7 @@ function LoginPage() {
   };
 
   return (
-    <div>
+    <div className="loginPage">
       {showLoginForm ? (
         <>
           <form
@@ -96,11 +97,12 @@ function LoginPage() {
             />
             <button type="submit">Login</button>
           </form>
-          <button onClick={() => setShowLoginForm(false)}>
+          <button onClick={() => setShowLoginForm(false)} className="switchFormButton">
             Don't have an account? Register
           </button>
         </>
       ) : (
+        <>
         <form
           className="loginForm"
           action={`${import.meta.env.VITE_API_URL}/user/register`}
@@ -117,6 +119,10 @@ function LoginPage() {
           />
           <button type="submit">Register</button>
         </form>
+        <button onClick={() => setShowLoginForm(true)} className="switchFormButton">
+            Login
+          </button>
+        </>
       )}
     </div>
   );
