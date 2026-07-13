@@ -133,23 +133,6 @@ export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
         clearInterval(room.saveTimeout);
       }
     }
-    /*if (room) {
-      if (room.users <= 0) {
-        if (room.deleteTimeout) {
-          clearTimeout(room.deleteTimeout);
-        }
-        room.deleteTimeout = setTimeout(
-          () => {
-            const index = rooms.findIndex((r) => r.id === roomId);
-            if (index !== -1 && rooms[index].users <= 0) {
-              rooms.splice(index, 1);
-              console.log(`Room ${roomId} deleted due to inactivity`);
-            }
-          },
-          5 * 60 * 1000,
-        );
-      }
-    }*/
   },
 });
 
