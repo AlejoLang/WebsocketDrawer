@@ -3,6 +3,7 @@ import './Canvas.css';
 import type { Point, CanvasTool } from '../types';
 import { CanvasTools, CanvasActions } from '../types';
 import Toolbar from './Toolbar';
+import { useNavigate } from 'react-router-dom';
 
 function Canvas({ roomId }: { roomId: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -13,6 +14,7 @@ function Canvas({ roomId }: { roomId: string }) {
   const [toolSize, setToolSize] = useState<number>(1);
   const [strokeColor, setStrokeColor] = useState<string>('#000000');
   const [toolType, setToolType] = useState<CanvasTool>(CanvasTools.PEN);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Connect to websocket
@@ -53,8 +55,11 @@ function Canvas({ roomId }: { roomId: string }) {
       console.error('Error on WebSocket:', error);
     };
 
-    ws.onclose = () => {
-      console.log('Disconnecting from server');
+    ws.onclose = (message) => {
+      if (message.code === 1011) {
+        alert('Disconnected from server. Redirecting to home page.');
+        navigate('/');
+      }
     };
 
     return () => {
