@@ -124,6 +124,15 @@ export const boardRoutes = new Elysia()
           },
         });
 
+        const roomIndex = rooms.findIndex((r) => r.id === roomId);
+        if (roomIndex !== -1) {
+          const roomInMemory = rooms[roomIndex];
+          if (roomInMemory.saveTimeout) {
+            clearInterval(roomInMemory.saveTimeout);
+          }
+          rooms.splice(roomIndex, 1);
+        }
+
         return { success: true, deletedRoomId: room.id };
       } catch (error) {
         console.error("Error deleting room:", error);
