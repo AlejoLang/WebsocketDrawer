@@ -85,7 +85,12 @@ export const websocketRoutes = new Elysia().ws("/canvas/:roomId", {
     const { roomId } = ws.data.params;
     const { action, toolType, toolSize, strokeColor } = message;
     const { x1, y1, x2, y2 } = message;
-    const canvas = rooms.find((r) => r.id === parseInt(roomId))?.canvas;
+    const room = rooms.find((r) => r.id === parseInt(roomId));
+    if (!room) {
+      ws.close(1011, "Room not found");
+      return;
+    }
+    const canvas = room.canvas;
     if (canvas) {
       const ctx = canvas.getContext("2d");
       if (action === CanvasActions.DRAW) {
